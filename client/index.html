@@ -26,59 +26,38 @@
 		<div class="container" ng-controller="MainCtrl as main">
 			
 			<div class="jumbotron row">
-				<div class="col-md-4">
-					<h2>Congress Members</h2>
-					<form ng-submit="main.searchByZip(main.inputs.zip)">
-						<div class="form-group">
-							<label for="zipCode">Search by Zip Code:</label>
-							<input class="form-control" id="zipCode" name="zipCode" type="text" ng-model="main.inputs.zip">
-						</div>
-						<button class="btn btn-primary sr-only">Submit</button>
-					</form>
+				
+				<div class="radio">
+					<label>
+						<input type="radio" ng-model="main.congressType" value="reps">
+						Representatives
+					</label>
+				</div>
+				<div class="radio">
+					<label>
+						<input type="radio" ng-model="main.congressType" value="sens">
+						Senators
+					</label>
 				</div>
 				
-				<div class="col-md-4">
-					<h2>Representatives</h2>
-					<form ng-submit="main.searchRepsByName(main.inputs.repsName)">
-						<div class="form-group">
-							<label for="repsName">Search by Last Name:</label>
-							<input class="form-control" id="repsName" name="repsName" type="text" ng-model="main.inputs.repsName">
-						</div>
-						<button class="btn btn-primary sr-only">Submit</button>
-					</form>
-
-					<form ng-submit="main.searchRepsByState(main.inputs.repsState)">
-						<div class="form-group">
-							<label for="repsState">Search by State:</label>
-							<input class="form-control" id="repsState" name="repsState" type="text" ng-model="main.inputs.repsState">
-						</div>
-						<button class="btn btn-primary sr-only">Submit</button>
-					</form>
-				</div>
-
-				<div class="col-md-4">
-					<h2>Senators</h2>
-					<form ng-submit="main.searchSensByName(main.inputs.sensName)">
-						<div class="form-group">
-							<label for="sensName">Search by Last Name:</label>
-							<input class="form-control" id="sensName" name="sensName" type="text" ng-model="main.inputs.sensName">
-						</div>
-						<button class="btn btn-primary sr-only">Submit</button>
-					</form>
-
-					<form ng-submit="main.searchSensByState(main.inputs.sensState)">
-						<div class="form-group">
-							<label for="sensState">Search by State:</label>
-							<input class="form-control" id="sensState" name="sensState" type="text" ng-model="main.inputs.sensState">
-						</div>
-						<button class="btn btn-primary sr-only">Submit</button>
-					</form>
-				</div>
+				<form class="form-inline">
+					<select class="form-control" ng-change="main.input = ''" ng-model="main.criteria" ng-options="item as item.label for item in main.apis"></select>
+					<input autofocus class="form-control" type="text" ng-disabled="main.loading" ng-model="main.input">
+					<button class="btn btn-primary" ng-click="main.criteria.method(main.input)" ng-disabled="main.loading || !main.input">
+						Search
+					</button>
+				</form>
 				
 			</div>
 			
 			<ul class="list-unstyled">
-				<li class="panel panel-default" ng-repeat="rep in main.reps">
+				<li class="h3" ng-show="main.loading">
+					Loading...
+				</li>
+				<li class="h3" ng-show="main.reps.length === 0 && !main.loading">
+					No Results.
+				</li>
+				<li class="panel panel-default" ng-hide="main.loading"  ng-repeat="rep in main.reps">
 					<h3 class="panel-heading">{{rep.name}} ({{rep.party}} - {{rep.state}})</h3>
 					<div class="panel-body">
 						<p><b>Office:</b> {{rep.office}}</p>
